@@ -14,7 +14,6 @@ set(DAEMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/auth/AuthRequest.cpp
     DaemonApp.cpp
     Display.cpp
-    DisplayManager.cpp
     DisplayServer.cpp
     XorgDisplayServer.cpp
     Greeter.cpp
@@ -24,10 +23,6 @@ set(DAEMON_SOURCES
     SignalHandler.cpp
     SocketServer.cpp
 )
-
-qt5_add_dbus_adaptor(DAEMON_SOURCES "${CMAKE_SOURCE_DIR}/data/interfaces/org.freedesktop.DisplayManager.xml"          "DisplayManager.h" SDDM::DisplayManager)
-qt5_add_dbus_adaptor(DAEMON_SOURCES "${CMAKE_SOURCE_DIR}/data/interfaces/org.freedesktop.DisplayManager.Seat.xml"     "DisplayManager.h" SDDM::DisplayManagerSeat)
-qt5_add_dbus_adaptor(DAEMON_SOURCES "${CMAKE_SOURCE_DIR}/data/interfaces/org.freedesktop.DisplayManager.Session.xml"  "DisplayManager.h" SDDM::DisplayManagerSession)
 
 add_executable(sddm ${DAEMON_SOURCES})
 target_link_libraries(sddm ${LIBXCB_LIBRARIES})

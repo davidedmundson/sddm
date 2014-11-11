@@ -22,7 +22,6 @@
 #include "Configuration.h"
 #include "Constants.h"
 #include "DaemonApp.h"
-#include "DisplayManager.h"
 #include "Seat.h"
 #include "Display.h"
 
@@ -130,8 +129,6 @@ namespace SDDM {
             env.insert("XAUTHORITY", m_authPath);
             env.insert("XCURSOR_THEME", mainConfig.Theme.CursorTheme.get());
             env.insert("XDG_SEAT", m_display->seat()->name());
-            env.insert("XDG_SEAT_PATH", daemonApp->displayManager()->seatPath(m_display->seat()->name()));
-            env.insert("XDG_SESSION_PATH", daemonApp->displayManager()->sessionPath(QString("Session%1").arg(daemonApp->newSessionId())));
             env.insert("XDG_VTNR", QString::number(m_display->terminalId()));
             env.insert("XDG_SESSION_CLASS", "greeter");
             env.insert("XDG_SESSION_TYPE", m_display->sessionType());
