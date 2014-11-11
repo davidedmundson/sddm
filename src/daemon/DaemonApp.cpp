@@ -24,6 +24,7 @@
 #include "PowerManager.h"
 #include "SeatManager.h"
 #include "SignalHandler.h"
+#include "LogindWatcher.h"
 
 #include "MessageHandler.h"
 
@@ -57,6 +58,8 @@ namespace SDDM {
         // create signal handler
         m_signalHandler = new SignalHandler(this);
 
+        new LogindWatcher(this);
+
         // initialize signal signalHandler
         SignalHandler::initialize();
 
@@ -68,8 +71,6 @@ namespace SDDM {
         // log message
         qDebug() << "Starting...";
 
-        // add a seat
-        m_seatManager->createSeat("seat0");
     }
 
     bool DaemonApp::testing() const {

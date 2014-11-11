@@ -4,6 +4,9 @@ include_directories(
 )
 include_directories("${CMAKE_BINARY_DIR}/src/common")
 
+include_directories("/opt/kde5/include")
+
+
 set(DAEMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/common/Configuration.cpp
     ${CMAKE_SOURCE_DIR}/src/common/SafeDataStream.cpp
@@ -22,10 +25,11 @@ set(DAEMON_SOURCES
     SeatManager.cpp
     SignalHandler.cpp
     SocketServer.cpp
+    LogindWatcher.cpp
 )
 
 add_executable(sddm ${DAEMON_SOURCES})
-target_link_libraries(sddm ${LIBXCB_LIBRARIES})
+target_link_libraries(sddm ${LIBXCB_LIBRARIES} qlogind)
 if(PAM_FOUND)
     target_link_libraries(sddm ${PAM_LIBRARIES})
 else()

@@ -274,7 +274,12 @@ namespace SDDM {
         env.insert("PATH", mainConfig.Users.DefaultPath.get());
         env.insert("DISPLAY", name());
         env.insert("XDG_SEAT", seat()->name());
-        env.insert("XDG_VTNR", QString::number(terminalId()));
+
+        //only the primary seat can have different ttys
+        if (seat()->name() == "seat0") {
+            env.insert("XDG_VTNR", QString::number(terminalId()));
+        }
+        
         env.insert("DESKTOP_SESSION", sessionName);
         env.insert("XDG_CURRENT_DESKTOP", xdgSessionName);
         env.insert("XDG_SESSION_CLASS", "user");

@@ -24,10 +24,12 @@
 #include "DaemonApp.h"
 #include "Display.h"
 #include "SignalHandler.h"
+#include "Seat.h"
 
 #include <QDebug>
 #include <QFile>
 #include <QProcess>
+#include <QTimer>
 
 #include <xcb/xcb.h>
 
@@ -37,7 +39,12 @@
 namespace SDDM {
     XorgDisplayServer::XorgDisplayServer(Display *parent) : DisplayServer(parent) {
         // figure out the X11 display
-        m_display = QString(":%1").arg(displayPtr()->displayId());
+
+	static int s_foo = 0;
+
+        m_display = QString(":%1").arg(s_foo);
+
+	s_foo++;
 
         // get auth directory
         QString authDir = RUNTIME_DIR;
@@ -155,13 +162,19 @@ namespace SDDM {
                  << "-nolisten" << "tcp"
                  << "-background" << "none"
                  << "-noreset"
-                 << QString("vt%1").arg(displayPtr()->terminalId());
+                 << "-seat" << displayPtr()->seat()->name();
+            //     << QString("vt%1").arg(displayPtr()->terminalId());
             qDebug() << "Running:"
                      << qPrintable(mainConfig.XDisplay.ServerPath.get())
                      << qPrintable(args.join(" "));
             process->start(mainConfig.XDisplay.ServerPath.get(), args);
-            SignalHandler::initializeSigusr1();
-            connect(DaemonApp::instance()->signalHandler(), SIGNAL(sigusr1Received()), this, SIGNAL(started()));
+//            SignalHandler::initializeSigusr1();//
+//            connect(DaemonApp::instance()->signalHandler(), SIGNAL(sigusr1Received()), this, SIGNAL(started()));
+
+
+
+
+	     QTimer::singleShot(5000, this, SIGNAL(started()));
         }
 
         // wait for display server to start
