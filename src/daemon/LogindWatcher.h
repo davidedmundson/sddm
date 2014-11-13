@@ -26,7 +26,8 @@
 #define LOGINDWATCHER_H
 
 #include <QObject>
-#include <QLogind/manager.h>
+
+#include <QLogind/seattracker.h>
 
 class LogindWatcher : public QObject
 {
@@ -40,7 +41,6 @@ public:
     void canGraphicalRemoved(const QString &seatName);
 
 private:
-    ManagerPtr m_manager;
     QHash<QString, SeatPtr> m_seats;
 };
 

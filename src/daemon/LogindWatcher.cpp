@@ -27,29 +27,21 @@
 LogindWatcher::LogindWatcher(QObject* parent):
     QObject(parent)
 {
-	registerTypes();
+    registerTypes();
 
-    PendingManager* pm = Manager::manager();
-    connect(pm, &PendingInterfaceInternal::finished, this, [=]() {
-        m_manager = pm->interface();
-        managerLoaded();
-    });
-}
+    SeatTracker *seatTracker = new SeatTracker(this);
 
-void LogindWatcher::managerLoaded()
-{
-    PendingSeats* ps = m_manager->listSeats();
+    PendingSeats* ps = seatTracker->listSeats();
     connect(ps, &PendingInterfaceInternal::finished, this, [=](){
         foreach(const SeatPtr &seat, ps->interfaces()) {
             newSeat(seat);
         }
     });
-    connect(m_manager.data(), &Manager::seatAdded, this, &LogindWatcher::newSeat);
+    connect(seatTracker, &SeatTracker::seatAdded, this, &LogindWatcher::newSeat);
 }
 
 void LogindWatcher::newSeat(const SeatPtr& seat)
 {
-qDebug() << "new seat";
     //keep a reference to all seats so we keep watching for changes
     m_seats.insert(seat->id(), seat);
     if (seat->canGraphical()) {
@@ -66,7 +58,6 @@ qDebug() << "new seat";
 
 void LogindWatcher::canGraphicalAdded(const QString &seat)
 {
-	qDebug() << "New graphical on " << seat;
     SDDM::DaemonApp::instance()->seatManager()->createSeat(seat);
 }
 
