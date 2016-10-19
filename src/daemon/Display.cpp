@@ -38,6 +38,11 @@
 #include <pwd.h>
 #include <unistd.h>
 
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusReply>
+#include "LogindDBusTypes.h"
+
 namespace SDDM {
     Display::Display(const int terminalId, Seat *parent) : QObject(parent),
         m_terminalId(terminalId),
@@ -267,6 +272,21 @@ namespace SDDM {
             return;
         }
 
+        qDebug() << "looking for existing sessions";
+
+        QString existingSessionId;
+
+        auto listSeatsMsg = QDBusMessage::createMethodCall(Logind::serviceName(), Logind::managerPath(), Logind::managerIfaceName(), QStringLiteral("ListSessions"));
+        QDBusReply<SessionInfoList> reply = QDBusConnection::systemBus().call(listSeatsMsg);
+        foreach(const SessionInfo &s, reply.value()) {
+            if (s.userName == user) {
+                qDebug() << "found " << s.sessionId;
+                existingSessionId =  s.sessionId;
+                break;
+            }
+        }
+
+
         // cache last session
         m_lastSession = session;
 
@@ -300,7 +320,11 @@ namespace SDDM {
         m_auth->insertEnvironment(env);
 
         m_auth->setUser(user);
-        m_auth->setSession(session.exec());
+        if (!existingSessionId.isNull()) {
+            m_auth->setSession(QStringLiteral("loginctl activate ") + existingSessionId);
+        } else {
+            m_auth->setSession(session.exec());
+        }
         m_auth->start();
     }
 
