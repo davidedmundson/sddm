@@ -34,6 +34,11 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusReply>
+#include "LogindDBusTypes.h"
+
 namespace SDDM {
     HelperApp::HelperApp(int& argc, char** argv)
             : QCoreApplication(argc, argv)
@@ -126,6 +131,20 @@ namespace SDDM {
 
         m_user = m_backend->userName();
         QProcessEnvironment env = authenticated(m_user);
+
+        qDebug() << "looking for existing sessions";
+
+        auto listSeatsMsg = QDBusMessage::createMethodCall(Logind::serviceName(), Logind::managerPath(), Logind::managerIfaceName(), QStringLiteral("ListSessions"));
+        QDBusReply<SessionInfoList> reply = QDBusConnection::systemBus().call(listSeatsMsg);
+        foreach(const SessionInfo &s, reply.value()) {
+            if (s.userName == m_user) {
+                qDebug() << "found " << s.sessionId;
+                auto activateMsg = QDBusMessage::createMethodCall(Logind::serviceName(), Logind::managerPath(), Logind::managerIfaceName(), QStringLiteral("ActivateSession"));
+                activateMsg << s.sessionId;
+                QDBusConnection::systemBus().call(activateMsg);
+                return;
+            }
+        }
 
         if (!m_session->path().isEmpty()) {
             env.insert(m_session->processEnvironment());

@@ -8,6 +8,7 @@ set(HELPER_SOURCES
     ${CMAKE_SOURCE_DIR}/src/common/Configuration.cpp
     ${CMAKE_SOURCE_DIR}/src/common/ConfigReader.cpp
     ${CMAKE_SOURCE_DIR}/src/common/SafeDataStream.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/LogindDBusTypes.cpp
     Backend.cpp
     HelperApp.cpp
     UserSession.cpp
@@ -27,7 +28,7 @@ else()
 endif()
 
 add_executable(sddm-helper ${HELPER_SOURCES})
-target_link_libraries(sddm-helper Qt5::Network)
+target_link_libraries(sddm-helper Qt5::Network Qt5::DBus)
 if(PAM_FOUND)
     target_link_libraries(sddm-helper ${PAM_LIBRARIES})
 else()
