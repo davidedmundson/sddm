@@ -30,8 +30,11 @@ namespace SDDM {
 
     class SeatManager : public QObject {
         Q_OBJECT
+        Q_CLASSINFO("D-Bus Interface", "org.sddm.DisplayManager")
     public:
         explicit SeatManager(QObject *parent = 0);
+
+        Q_INVOKABLE void switchToGreeter(const QString &seat);
 
     protected:
         void createSeat(const QString &name);

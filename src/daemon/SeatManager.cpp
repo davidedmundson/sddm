@@ -115,6 +115,9 @@ namespace SDDM {
 
         QDBusConnection::systemBus().connect(Logind::serviceName(), Logind::managerPath(), Logind::managerIfaceName(), QStringLiteral("SeatNew"), this, SLOT(logindSeatAdded(QString,QDBusObjectPath)));
         QDBusConnection::systemBus().connect(Logind::serviceName(), Logind::managerPath(), Logind::managerIfaceName(), QStringLiteral("SeatRemoved"), this, SLOT(logindSeatRemoved(QString,QDBusObjectPath)));
+
+        QDBusConnection::systemBus().registerService("org.sddm.displayManager");
+        QDBusConnection::systemBus().registerObject(QStringLiteral("/"), this, QDBusConnection::ExportAllInvokables);
     }
 
     void SeatManager::createSeat(const QString &name) {
@@ -164,6 +167,14 @@ namespace SDDM {
         delete logindSeat;
         removeSeat(name);
     }
+
+   void SeatManager::switchToGreeter(const QString &name) {
+
+    // check if seat exists
+    if (!m_seats.contains(name))
+         return;
+    // switch to greeter
+    m_seats.value(name)->createDisplay();
 }
 
 #include "SeatManager.moc"
