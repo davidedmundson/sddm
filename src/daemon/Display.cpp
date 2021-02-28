@@ -52,14 +52,18 @@
 #endif
 #include <utmpx.h>
 
+#include "VirtualTerminal.h"
+
 namespace SDDM {
-    Display::Display(const int terminalId, Seat *parent) : QObject(parent),
-        m_terminalId(terminalId),
+    Display::Display(Seat *parent) : QObject(parent),
         m_auth(new Auth(this)),
         m_displayServer(new XorgDisplayServer(this)),
         m_seat(parent),
         m_socketServer(new SocketServer(this)),
         m_greeter(new Greeter(this)) {
+
+        // Allocate vt
+        m_terminalId = VirtualTerminal::setUpNewVt();
 
         // respond to authentication requests
         m_auth->setVerbose(true);
