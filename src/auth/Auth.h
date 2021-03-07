@@ -159,6 +159,11 @@ namespace SDDM {
         */
         void start();
 
+        /**
+         * Stops the process.
+         */
+        void stop();
+
     Q_SIGNALS:
         void autologinChanged();
         void greeterChanged();
