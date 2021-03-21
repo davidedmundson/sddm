@@ -39,11 +39,13 @@ namespace SDDM {
 
         void setPath(const QString &path);
         QString path() const;
-
+        QString displayServerCommand() const;
+        void setDisplayServerCommand(const QString &command);
         void setup();
 
     private:
-        QString m_path { };
+        QString m_path;
+        QString m_displayServerCmd;
     };
 }
 

@@ -142,6 +142,12 @@ namespace SDDM {
         void setUser(const QString &user);
 
         /**
+         * Set the display server command to be started before the greeter.
+         * @param command Command of the display server to be started
+         */
+        void setDisplayServerCommand(const QString &command);
+
+        /**
         * Set the session to be started after authenticating.
         * @param path Path of the session executable to be started
         */
@@ -170,6 +176,7 @@ namespace SDDM {
         void verboseChanged();
         void cookieChanged();
         void userChanged();
+        void displayServerCommandChanged();
         void sessionChanged();
         void requestChanged();
 
@@ -190,6 +197,13 @@ namespace SDDM {
         * @param success true if succeeded
         */
         void sessionStarted(bool success, qint64 pid);
+
+        /**
+         * Emitted when the display server is ready.
+         *
+         * @param displayName display name
+         */
+        void displayServerReady(const QString &displayName);
 
         /**
         * Emitted when the helper quits, either after authentication or when the session ends.
