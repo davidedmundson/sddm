@@ -69,6 +69,8 @@ namespace SDDM {
         env.insert(QStringLiteral("DISPLAY"), displayName);
         env.insert(QStringLiteral("XAUTHORITY"), displayHelper->m_xauth.authPath());
 
+        setProcessEnvironment(env);
+
         qInfo() << "Starting X11 greeter session:" << m_path;
         QProcess::start(m_path);
 
